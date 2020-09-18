@@ -1,35 +1,81 @@
 import { Router } from 'express';
+import multer from 'multer';
+import uploadConfig from '../config/upload';
 
 import authMiddleware from '../middlewares/auth';
+import AdminController from '../controllers/AdminController';
+import BarbeariaController from '../controllers/BarbeariaController';
 
-import CadastroController from '../controllers/CadastroController';
-import AgendamentoController from '../controllers/AgendamentoController';
-import DisponivelController from '../controllers/DisponivelController';
+
 import SessionController from '../controllers/SessionController';
+import BarbeiroController from '../controllers/BarbeiroController';
+import UsuarioController from '../controllers/UsuarioController';
+import AgendamentoController from '../controllers/AgendamentoController';
+
 
 const routes = new Router();
 
-
+const upload = multer(uploadConfig);
 
 routes.get('/', (req, res)=>{
   
     return res.json({ ok:true});
 });
 
-routes.post('/cadastro', CadastroController.store);
+// admin routes -----------------------------------------------------------------------
+routes.post('/admin/cadastro', upload.single('thumbnail') ,AdminController.create);
+routes.post('/admin/login', SessionController.sessionAdmin );
+routes.put('/admin/update',authMiddleware, upload.single('thumbnail') ,AdminController.update);
+routes.get('/admin/funcionarios',authMiddleware,AdminController.listarFuncionarios);
+routes.delete('/admin/funcionarios',authMiddleware,AdminController.removerFuncionario);
+routes.post('/admin/agendamento',authMiddleware,AdminController.listarAgendamentos);
 
-routes.post('/login', SessionController.store );
+//-------------------------------------------------------------------------------------------
+
+//Barbearias --------------------------------------------------------------------------
+routes.post('/admin/barbearia/',authMiddleware, upload.single('thumbnail') ,BarbeariaController.create);
+routes.put('/admin/barbearia/',authMiddleware, upload.single('thumbnail') ,BarbeariaController.update);
+routes.post('/admin/barbearia/config',authMiddleware, upload.single('thumbnail') ,BarbeariaController.configBarbearia);
+routes.post('/barbearia/listar',authMiddleware,BarbeariaController.ListaCidadeEstado);
 
 
-routes.use(authMiddleware);
+//--------------------------------------------------------------------------------------------------
 
-routes.post('/agendar', AgendamentoController.store);
+//Barbeiro ----------------------------------------------------------------------------
+routes.post('/admin/barbeiro/', upload.single('thumbnail') ,BarbeiroController.create);
+routes.post('/admin/barbeiro/login', SessionController.sessionBarbeiro );
+routes.put('/admin/barbeiro/',authMiddleware, upload.single('thumbnail') ,BarbeiroController.update);
+routes.post('/admin/barbeiro/agendamento',authMiddleware,BarbeiroController.listarAgendamentos);
+routes.delete('/admin/barbeiro/agendamento',authMiddleware,BarbeiroController.finalizarAgendamento);
+routes.post('/admin/barbeiro/listar',authMiddleware,BarbeiroController.listarFuncionariosBarbearia);
+//------------------------------------------------------------------------------------
 
-routes.get('/agendamentos/:user_id', AgendamentoController.indexById);
+// users -------------------------------------------------------------------------------
+routes.post('/cadastro', upload.single('thumbnail') ,UsuarioController.create);
+routes.post('/login', SessionController.sessionUser );
+routes.put('/update',authMiddleware, upload.single('thumbnail') ,UsuarioController.update);
+routes.get('/agendamento',authMiddleware,UsuarioController.listarAgendamentos);
+routes.delete('/agendamento/:id',authMiddleware,UsuarioController.finalizarAgendamento);
+routes.get('/user',authMiddleware,UsuarioController.getUser);
 
-routes.get('/agendamentos',AgendamentoController.index);
+//--------------------------------------------------------------------------------------
+ 
+ routes.post('/admin/agendamento/create',authMiddleware,AgendamentoController.createAdm);
+ routes.post('/agendamento',authMiddleware,AgendamentoController.createUser);
+ routes.post('/listadisponivel',authMiddleware,AgendamentoController.listaDisponivel);
 
-routes.post('/disponivel', DisponivelController.index );
+// Agendamento ---------------------------------------------------------------------------
+
+
+
+//----------------------------------------------------------------------------------------
+
+
+//routes.use(authMiddleware);
+
+//routes.put('/usuario',upload.single('thumbnail'),UsuarioController.update );
+
+
 
 
 

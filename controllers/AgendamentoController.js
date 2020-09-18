@@ -1,40 +1,127 @@
-import User from '../models/User';
 import Agendamento from '../models/Agendamento';
+import Barbearia from '../models/Barbearia';
 
-class AgendamentoController {
 
-   // data tipo horario user_id
+class AgendamentoController{
 
-    async index(req,res){
+    //save admin on database
+    async createAdm(req,res){
 
-        let agendamentos = await Agendamento.find();
-        return res.json({agendamentos});
+        const { nome , data, hora, barbeiro, barbearia} = req.body;
+        const  filename  = req.file;
 
+            let agendamento = await Agendamento.findOne({data,hora,barbeiro,barbearia});
+
+            var filtred = {nome , data, hora, barbeiro, barbearia,status:true}
+            if(!filename){ delete filtred['filename']}
+            if(!nome){ delete filtred['nome']}
+            if(!data){delete filtred['data']}
+            if(!hora){delete filtred['hora']}
+            if(!barbeiro){delete filtred['barbeiro']}
+            if(!barbearia){delete filtred['barbearia']}
+
+            console.log(filtred)
+
+            if(!agendamento){
+                agendamento = await Agendamento.create( filtred );
+
+                
+
+                //return res.json({ok:"usuario cadastrado com sucesso"});
+                return res.json(agendamento);
+
+                
+            }
+
+            return res.json({
+                error:"horario indisponivel"
+            })
+     
     }
 
-    async indexById(req,res){
-        const { user_id } = req.params;
-        let agendamentos = await Agendamento.find({user_id});
+    async createUser(req,res){
 
-        return res.json({agendamentos});
- 
+        const { data, hora, barbeiro, barbearia} = req.body;
+        const  filename  = req.file;
+        const user_id = req.user_id;
+
+            let agendamento = await Agendamento.findOne({data,hora,barbeiro,barbearia});
+
+            var filtred = {usuario:user_id,data, hora, barbeiro, barbearia,status:true}
+            if(!filename){ delete filtred['filename']}
+            if(!data){delete filtred['data']}
+            if(!hora){delete filtred['hora']}
+            if(!barbeiro){delete filtred['barbeiro']}
+            if(!barbearia){delete filtred['barbearia']}
+
+            console.log(filtred)
+
+            if(!agendamento){
+                
+                agendamento = await Agendamento.create( filtred );
+
+                
+
+                //return res.json({ok:"usuario cadastrado com sucesso"});
+                return res.json(agendamento);
+
+                
+            }
+
+            return res.json({
+                error:"horario indisponivel"
+            })
+     
     }
 
-    async store(req,res){
+    async listaDisponivel(req,res){
 
-        const { data , tipo, horario, user_id }  = req.body;
+        //verificar dia da semana se e compativel com o horario de trabalho do estabelecimento
+
+        const { data, barbearia,barbeiro} = req.body;
+           
+        // verificar se a data atual e igual ou superior a do requerimento    
+        if(true){
+
+            const agendamentos = await Agendamento.find({data,barbearia,barbeiro});
+        let agendamentoHora = [];   
+        const barbeariaConfig = await Barbearia.findOne({_id:barbearia});
         
-        const documents = await Agendamento.find({data,tipo,horario,user_id});
-
-        if(documents.length < 20){
-        let agendar = await Agendamento.create({data,tipo,horario,user_id});
+         const{dia,horario} = barbeariaConfig;
             
-            return res.json({agendar});
+         if(!(agendamentos.length > 0)){
+            // retornar lista toda disponivel
+            return res.json(horario);    
+
         }
-        
-        return res.json({"error":"agendamento nao disponivel"});
+
+       
+           
+            agendamentos.forEach(element => {
+                agendamentoHora.push(element['hora']);
+            });
+
+            horario.forEach(element => {
+                    
+                agendamentoHora.forEach(hora => {
+                    if(element[hora]){
+                        element[hora] = false;
+                    }
+                });
+            });
+
+            
+        return res.json(horario);
+
+
+        }
+
+        return res.json({error:'data anterior a atual'});
         
     }
+   
+
 }
 
-export default new  AgendamentoController();
+
+export default new AgendamentoController();

@@ -1,13 +1,18 @@
-import mongoose, { Schema, model } from 'mongoose';
+import  { Schema, model } from 'mongoose';
+
 
 const AgendamentoSchema = new Schema({
 
         data:String,
-        tipo:String,
-        horario:String,
-        user_id:String,    
+        hora:String,
+        nome:String,
+        barbeiro:{ type: Schema.Types.ObjectId, ref: 'Barbeiro' },    
+        barbearia:{ type: Schema.Types.ObjectId, ref: 'Barbearia' },
+        usuario:{ type: Schema.Types.ObjectId, ref: 'User' },
+        status:Boolean
+        }  
 
-});
+);
 
 
 export default model('Agendamento',AgendamentoSchema);

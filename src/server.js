@@ -1,3 +1,2 @@
 import app from './app';
-
-app.server.listen(3333);
+app.app.listen(3333);
