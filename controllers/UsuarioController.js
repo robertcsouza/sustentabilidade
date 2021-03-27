@@ -1,47 +1,57 @@
 import User from '../models/User';
-import Agendamento from '../models/Agendamento';
 
+import path from 'path';
+import fs from 'fs';
+import jwt from 'jsonwebtoken';
+import ConfigAuth from '../config/auth';
 
 class UsuarioController{
 
-    async getUser(req,res){
-        const user_id = req.user_id;
-            
-        const user = await User.findOne({_id:user_id});
-
-        if(user){
-            
-            return res.json(user);
-
-        }
-        
-        return res.json({
-            error:"Nao foi possivel executar a ação"
-        });
-
-    }
-
+ 
     async create(req,res){
 
-        const { nome , email, senha, nascimento} = req.body;
-        const  filename  = req.file;
-
-            let user = await User.findOne({email});
+        const {nome , email, senha, nascimento} = req.body;
+        
+       
+         
+        let user = await User.findOne({email});
 
 
             if(!user){
                 user = await User.create({
-                    thumbnail: filename,
                     nome,
                     email,
-                    senha,
+                    senha, 
                     nascimento,
                 });
 
+                //return res.json({ok:"usuario cadastrado com sucesso"});
+               
                 
 
-                //return res.json({ok:"usuario cadastrado com sucesso"});
-                return res.json(user);
+                const userCreate = await User.findOne({email,senha});
+                
+                if(!userCreate){
+                   
+                    return res.status(401).json({error:"falha ao fazer login"});
+                 
+                }
+        
+                const {_id} = userCreate;
+                
+                return res.json({
+                    user:{
+                        _id,
+                        nome,
+                        email
+                    },
+                    token: jwt.sign({_id},ConfigAuth.secret,{
+                        expiresIn:ConfigAuth.expiresIn
+                    })
+                });
+               
+               
+                //return res.json(user);
 
                 
             }
@@ -54,61 +64,39 @@ class UsuarioController{
 
         const  user_id  = req.user_id;
         const { nome ,nascimento} = req.body;
-        const  filename  = req.file;  
-        var update = {filename,nome,nascimento}
-        if(!filename){ delete update['filename']}
+        let filename;
+        if(req.file){
+            filename = req.file.filename;
+        }
+        var update = {'thumbnail':filename,nome,nascimento}
+        if(!filename){ delete update['thumbnail']}
         if(!nome){ delete update['nome']}
         if(!nascimento){delete update['nascimento']}
         
-        const  user = await User.findOneAndUpdate({_id:user_id},
-           update
+         
+        
+        const  user = await User.findOneAndUpdate({_id:user_id},    
+            update
            ,{
                 new:false
             });
+
+            
+            try {
+                const {thumbnail} =  user;
+    
+                var upload = path.resolve(__dirname,'..','uploads',)
+                //console.log(`${upload}/modeloMan1-1603501256583.jpg`);   
+                fs.unlinkSync(`${upload}/${thumbnail}`);      
+                //path.resolve(__dirname,'..','uploads')
+       
+             } catch (error) {
+                    console.log('nao foi possivel deletar a imagem');             
+             }
+        
+
  
         return res.json({ok:'atualizado com sucesso'})
-    }
-
-
-    async listarAgendamentos(req,res){
-        const user_id = req.user_id;
-            
-        const user = await User.findOne({_id:user_id});
-
-        if(user){
-
-            
-            const agendamentos = await Agendamento.find({usuario:user_id}).populate('barbeiro').populate('barbearia').populate('usuario');
-
-            return res.json({agendamentos});
-
-        }
-        
-        return res.json({
-            error:"Nao foi possivel executar a ação"
-        });
-
-    }
-
-    async finalizarAgendamento(req,res){
-        const user_id = req.user_id;
-        const { id } = req.params; 
-        console.log(id)   
-        const user = await User.findOne({_id:user_id});
-
-        if(user){
-
-            
-            const agendamento = await Agendamento.findOneAndDelete({_id:id,usuario:user_id});
-
-            return res.json({ok:true});
-
-        }
-        
-        return res.json({
-            error:"Nao foi possivel executar a ação"
-        });
-
     }
 
 }

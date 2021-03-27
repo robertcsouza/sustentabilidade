@@ -17,7 +17,7 @@ class App{
         this.serverIO.on('connection',()=>{
             console.log('conectado');
         });
-        mongoose.connect('mongodb://localhost:27017/barbershop',{
+        mongoose.connect('mongodb://localhost:27017/cdb',{
             useNewUrlParser:true,
             useUnifiedTopology:true
         });
