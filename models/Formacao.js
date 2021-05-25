@@ -1,10 +1,14 @@
 import { Schema, model } from 'mongoose';
 
-
+//instituicao,curso,dataInicio,dataTermino,periodo,turno,status
 const FormacaoSchema = new Schema ({
-    titulo:String,
-    instituto:String,
-    dataConclusao:String,
+    instiuicao:String,
+    curso:String,
+    dataInicio:String,
+    dataTermino:String,
+    periodo:String,
+    turno:String,
+    status:String,
     userId:String
 });
 

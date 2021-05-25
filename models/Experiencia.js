@@ -1,11 +1,13 @@
 import { Schema, model } from 'mongoose';
 
+//nome,local,atividades,dataInicio,dataTermino
 
 const ExperienciaSchema = new Schema ({
-    empresa:String,
-    periodo:String,
-    descricao:String,
-    cargo:String,
+    nome:String,
+    local:String,
+    atividades:String,
+    dataInicio:String,
+    dataTermino:String,
     userId:String
 });
 

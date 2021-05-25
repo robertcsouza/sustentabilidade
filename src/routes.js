@@ -31,15 +31,20 @@ routes.put('/curriculo/update',authMiddleware,CurriculoController.update);
 routes.delete('/curriculo/delete/:id',authMiddleware,CurriculoController.delete);
 
 // Formacao -------------------------------------------------------------------------------
+routes.get('/curriculo/formacao',authMiddleware,CurriculoController.getFormacao);
 routes.post('/curriculo/formacao/create',authMiddleware,CurriculoController.FormacaoCreate);
 routes.delete('/curriculo/formacao/delete/:id',authMiddleware,CurriculoController.FormacaoDelete);
 
-// Formacao -------------------------------------------------------------------------------
+// Experiencia -------------------------------------------------------------------------------
+routes.get('/curriculo/experiencia',authMiddleware,CurriculoController.getExperiencia);
 routes.post('/curriculo/experiencia/create',authMiddleware,CurriculoController.ExperienciaCreate);
 routes.delete('/curriculo/experiencia/delete/:id',authMiddleware,CurriculoController.ExperienciaDelete);
 
 
-//----------------------------------------------------------------------------------------
+//Conhecimento----------------------------------------------------------------------------------------
+routes.get('/curriculo/conhecimento',authMiddleware,CurriculoController.getConhecimento);
+routes.post('/curriculo/conhecimento/create',authMiddleware,CurriculoController.ConhecimentoCreate);
+routes.delete('/curriculo/conhecimento/delete/:id',authMiddleware,CurriculoController.ConhecimentoDelete);
 
 
 //routes.use(authMiddleware);
