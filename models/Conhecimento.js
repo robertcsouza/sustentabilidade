@@ -5,7 +5,10 @@ import { Schema, model } from 'mongoose';
 const ConhecimentoSchema = new Schema ({
     nome:String,
     nivel:String,
+    docAdicional:String,
+    cursoAdicional:String,
     userId:String
+
 });
 
 export default model('Conhecimento',ConhecimentoSchema);

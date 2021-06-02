@@ -190,10 +190,10 @@ class CurriculoController{
       async ConhecimentoCreate(req,res){
 
         
-        const {nome,nivel} = req.body;
+        const {nome,nivel,docAdicional,cursoAdicional} = req.body;
         const user_id = req.user_id;
             
-            let payload = {nome,nivel,"userId":user_id}
+            let payload = {nome,nivel,docAdicional,cursoAdicional,"userId":user_id}
 
             let user = await User.findOne({"_id":user_id});
             
