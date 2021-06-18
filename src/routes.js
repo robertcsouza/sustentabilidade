@@ -20,6 +20,7 @@ routes.get('/', (req, res)=>{
 
 
 // users -------------------------------------------------------------------------------
+routes.get('/user',authMiddleware,UsuarioController.index);
 routes.post('/cadastro',UsuarioController.create);
 routes.post('/login', SessionController.sessionUser );
 routes.put('/update',authMiddleware, upload.single('thumbnail') ,UsuarioController.update);

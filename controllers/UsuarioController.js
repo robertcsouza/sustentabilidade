@@ -7,6 +7,29 @@ import ConfigAuth from '../config/auth';
 
 class UsuarioController{
 
+    async index(req,res){
+
+        const  user_id  = req.user_id;
+       
+        
+        if(!user_id){
+                   
+            return res.status(401).json({error:"Não autorizado"});
+         
+        }
+
+        const  user = await User.findOne({'_id':user_id},'-senha');
+
+        if(!user_id){
+                   
+            return res.status(404).json({error:"Não Foi possivel encontrar o usuario"});
+         
+        }
+
+        res.json(user)
+    }
+
+
  
     async create(req,res){
 
