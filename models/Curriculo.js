@@ -17,6 +17,7 @@ const CurriculoSchema = new Schema({
         casa:String,
         bairro:String,
         estado:String,
+        objetivo:String,
         status:Boolean
         }  
 

@@ -14,10 +14,10 @@ class CurriculoController{
     async create(req,res){
 
         
-        const {nome,email,telefone,cidade,dataNascimento,status,sexo,civil,nacionalidade,cep,logradouro,casa,bairro,estado} = req.body;
+        const {nome,email,telefone,cidade,dataNascimento,status,sexo,civil,nacionalidade,cep,logradouro,casa,bairro,estado,objetivo} = req.body;
         const user_id = req.user_id;
             
-            let payload = {"userId":user_id,nome,email,telefone,cidade,dataNascimento,status,sexo,civil,nacionalidade,cep,logradouro,casa,bairro,estado}
+            let payload = {"userId":user_id,nome,email,telefone,cidade,dataNascimento,status,sexo,civil,nacionalidade,cep,logradouro,casa,bairro,estado,objetivo}
 
             let curriculo = await Curriculo.findOne({"userId":user_id});
             console.log(curriculo);
